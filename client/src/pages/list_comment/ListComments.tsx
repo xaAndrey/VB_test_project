@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { CommentDto } from "../../api/comments/dto";
 import { fetchAllComments } from "../../api/comments/request";
+import {
+  EuiText,
+} from '@elastic/eui';
 
 export const ListComments = (): JSX.Element => {
   const [comments, setComments] = useState<CommentDto[]>([]);
+  const [variant, setVariant] = useState<string>("json");
+
 
   useEffect(() => {
     fetchAllComments()
@@ -14,23 +19,30 @@ export const ListComments = (): JSX.Element => {
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {console.log(comments)}, [comments])
+  useEffect(() => {
+    console.log(comments);
+  }, [comments]);
 
-  return (
-    <>
-    <h1>Hello world!</h1>
-      {comments.map((comment, index) => {
-        return(
+  return <>
+  <h1>Comments</h1>
+  {variant === "json" && <>
+  <EuiText>
+    <h2>JSON</h2>
+    {comments.map((comment) => {
+      return(
         <>
-          <h1>
-            {comment.id} -- {index}
-          </h1>
-          <h2>
-            {comment.email}
-          </h2>
-          </>);
-      })}
-      {/* {comments[0].body} */}
-    </>
-  );
+        <p>
+        {'{'}<br/>
+        &emsp;{`"id" : ${comment.id},`}<br/>
+        &emsp;{`"name" : ${comment.name},`}<br/>
+        &emsp;{`"email" : ${comment.email},`}<br/>
+        &emsp;{`"body" : ${comment.body}`}<br/>
+        {'},'}
+        </p>
+        </>
+      );
+    })}
+    </EuiText>
+  </>}
+  </>;
 };
