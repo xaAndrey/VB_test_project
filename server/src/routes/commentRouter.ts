@@ -1,13 +1,13 @@
 import { Router } from "express";
 
 // /api/documents
-const documentRouter = Router();
+const commentRouter = Router();
 
 // /api/documents
-documentRouter.get('/', async (req, res) => {
+commentRouter.get('/', async (req, res) => {
     await fetch('https://jsonplaceholder.typicode.com/comments')
         .then((response) => response.json())
         .then((json) => res.json(json));
 })
 
-export default documentRouter;
+export default commentRouter;

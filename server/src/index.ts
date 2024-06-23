@@ -1,5 +1,5 @@
 import express from 'express';
-import documentRouter from './routes/documentRouter';
+import commentRouter from './routes/commentRouter';
 
 export const app = express();
 const port = process.env.PORT || 3000;
@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
     res.send('Hello world');
 })
 
-app.use('/api/documents', documentRouter);
+app.use('/api/comments', commentRouter);
 
 app.listen(port, () => {
     console.log(
