@@ -2,15 +2,32 @@ import { useEffect, useState } from "react";
 import { CommentDto } from "../../api/comments/dto";
 import { fetchAllComments } from "../../api/comments/request";
 import {
-  EuiBasicTable,
-  EuiBasicTableColumn,
-  EuiTableFieldDataColumnType,
-  EuiText,
+  EuiButtonGroup,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from "@elastic/eui";
+import { JsonVisualization } from "../../components/JsonVisualization";
+import { TableEUIVisualization } from "../../components/TableEUIvisualization";
+import { TableMUIVisualization } from "../../components/TableMUIVisualization";
 
 export const ListComments = (): JSX.Element => {
   const [comments, setComments] = useState<CommentDto[]>([]);
-  const [variant, setVariant] = useState<string>("table");
+  const [variant, setVariant] = useState<string>("table_eui");
+
+  const toggleButtons = [
+    {
+      id: `json`,
+      label: 'JSON',
+    },
+    {
+      id: `table_eui`,
+      label: 'Table EUI',
+    },
+    {
+      id: `table_mui`,
+      label: 'Table MUI',
+    },
+  ];
 
   useEffect(() => {
     fetchAllComments()
@@ -25,84 +42,40 @@ export const ListComments = (): JSX.Element => {
     console.log(comments);
   }, [comments]);
 
-  const columns: Array<EuiBasicTableColumn<CommentDto>> = [
-    {
-      field: "id",
-      name: "ID",
-    },
-    {
-      field: "email",
-      name: "Email",
-    },
-    {
-      field: "name",
-      name: "Name",
-    },
-  ];
-
-  const getRowsProps = (comment: CommentDto) => {
-    const { id } = comment;
-    return {
-      "data-test-subj": `row-${id}`,
-      className: "customRowClass",
-      onClick: () => {},
-    };
-  };
-
-  const getCellProps = (
-    comment: CommentDto,
-    column: EuiTableFieldDataColumnType<CommentDto>
-  ) => {
-    const { id } = comment;
-    const { field } = column;
-    return {
-      className: "customCellClass",
-      "data-test-subj": `cell-${id}-${String(field)}`,
-      textOnly: true,
-    };
+  const onChange = (optionId: string) => {
+    setVariant(optionId);
   };
 
   return (
     <>
-      <h1>Comments</h1>
-      {variant === "json" && (
-        <>
-          <EuiText>
-            <h2>JSON</h2>
-            {comments.map((comment) => {
-              return (
-                <>
-                  <p>
-                    {"{"}
-                    <br />
-                    &emsp;{`"id" : ${comment.id},`}
-                    <br />
-                    &emsp;{`"name" : ${comment.name},`}
-                    <br />
-                    &emsp;{`"email" : ${comment.email},`}
-                    <br />
-                    &emsp;{`"body" : ${comment.body}`}
-                    <br />
-                    {"},"}
-                  </p>
-                </>
-              );
-            })}
-          </EuiText>
-        </>
+      <EuiFlexGroup alignItems="center">
+        <EuiFlexItem>
+          <h1>Comments</h1>
+        </EuiFlexItem>
+
+        <EuiFlexItem>
+          <EuiButtonGroup
+            style={{ border: "0px" }}
+            isFullWidth
+            legend="Data visualization options"
+            options={toggleButtons}
+            idSelected={variant}
+            onChange={(value) => onChange(value)}
+          ></EuiButtonGroup>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      {variant === "json" && <JsonVisualization comments={comments} />}
+      
+      {variant === "table_eui" && (
+        <TableEUIVisualization
+          comments={comments} 
+        />
       )}
-      {variant === "table" && (
-        <>
-          <EuiBasicTable
-            tableCaption="Comments List"
-            items={comments}
-            rowHeader="id"
-            columns={columns}
-            rowProps={getRowsProps}
-            cellProps={getCellProps}
-            responsiveBreakpoint={false}
-          />
-        </>
+
+      {variant === "table_mui" && (
+        <TableMUIVisualization 
+          comments={comments}
+        />
       )}
     </>
   );
