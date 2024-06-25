@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CommentDto } from "../api/comments/dto";
 import {
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +13,8 @@ import {
   TextField,
 } from "@mui/material";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { routes } from "../util/constants";
 
 interface TableMUIVisualizationProps {
   comments: CommentDto[];
@@ -29,6 +31,8 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
     name: searchParams.get('name') ?? "",
     email: searchParams.get('email') ?? "",
   });
+
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const params = {
@@ -107,6 +111,7 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
                 fullWidth
               />
             </TableCell>
+            <TableCell colSpan={6} />
           </TableRow>
         </TableHead>
         <TableHead>
@@ -114,6 +119,7 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
             <TableCell>ID</TableCell>
             <TableCell>Email</TableCell>
             <TableCell>Name</TableCell>
+            <TableCell>Link</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -129,9 +135,11 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
                 {comment.id}
               </TableCell>
 
-              <TableCell style={{ width: "40%" }}>{comment.email}</TableCell>
+              <TableCell style={{ width: "30%" }}>{comment.email}</TableCell>
 
-              <TableCell style={{ width: "40%" }}>{comment.name}</TableCell>
+              <TableCell style={{ width: "30%" }}>{comment.name}</TableCell>
+              
+              <TableCell style={{ width: "20%" }}><Link onClick={() => navigate(routes.goToCommentPage(comment.id))}>{`/comment/${comment.id}`}</Link></TableCell>
             </TableRow>
           ))}
           {emptyRows > 0 && (
@@ -144,7 +152,7 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[10, 50, 100, { label: "All", value: -1 }]}
-              colSpan={3}
+              colSpan={4}
               count={comments.length}
               rowsPerPage={rowsPerPage}
               page={page}
@@ -166,164 +174,3 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
     </TableContainer>
   );
 };
-
-/*
-<TableContainer>
-      <StyledTable>
-        <colgroup>
-          <col style={{ width: "20" }} />
-          <col style={{ width: "20" }} />
-          <col style={{ width: "20" }} />
-          <col style={{ width: "20" }} />
-          <col style={{ width: "20" }} />
-        </colgroup>
-
-        <TableHead>
-          <TableRow>
-            <StyledTableCell align="center">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onClick={() => handleSort("id")}
-              >
-                <span>Токен</span>
-                {columnToSort === "id" ? (
-                  sortDirection === "asc" ? (
-                    <ArrowDropUpOutlinedIcon />
-                  ) : (
-                    <ArrowDropDownOutlinedIcon />
-                  )
-                ) : null}
-              </div>
-            </StyledTableCell>
-
-            <StyledTableCell align="center">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onClick={() => handleSort("name")}
-              >
-                <span>Имя</span>
-                {columnToSort === "name" ? (
-                  sortDirection === "asc" ? (
-                    <ArrowDropUpOutlinedIcon />
-                  ) : (
-                    <ArrowDropDownOutlinedIcon />
-                  )
-                ) : null}
-              </div>
-            </StyledTableCell>
-
-            <StyledTableCell align="center">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onClick={() => handleSort("age")}
-              >
-                <span>Возраст</span>
-                {columnToSort === "age" ? (
-                  sortDirection === "asc" ? (
-                    <ArrowDropUpOutlinedIcon />
-                  ) : (
-                    <ArrowDropDownOutlinedIcon />
-                  )
-                ) : null}
-              </div>
-            </StyledTableCell>
-
-            <StyledTableCell align="center">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onClick={() => handleSort("gender")}
-              >
-                <span>Пол</span>
-                {columnToSort === "gender" ? (
-                  sortDirection === "asc" ? (
-                    <ArrowDropUpOutlinedIcon />
-                  ) : (
-                    <ArrowDropDownOutlinedIcon />
-                  )
-                ) : null}
-              </div>
-            </StyledTableCell>
-
-            <StyledTableCell align="center">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onClick={() => handleSort("city")}
-              >
-                <span>Город</span>
-                {columnToSort === "city" ? (
-                  sortDirection === "asc" ? (
-                    <ArrowDropUpOutlinedIcon />
-                  ) : (
-                    <ArrowDropDownOutlinedIcon />
-                  )
-                ) : null}
-              </div>
-            </StyledTableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {subjects
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((registration) => (
-              <TableRow key={registration.token} onClick={() => navigate(routes.goToSubjectPage(registration.id))}>
-                <StyledTableCell align="center" sx={TokenStyleTExt}>{registration.token}</StyledTableCell>
-
-                <StyledTableCell align="center" sx={FullNameTextStyle}>
-                  {registration.name !== null ? registration.name : '-'}
-                </StyledTableCell>
-
-                <StyledTableCell align="center" sx={FullNameTextStyle}>
-                  <Box fontWeight="bold">{registration.age !== null ? registration.age : '-'}</Box>
-                </StyledTableCell>
-
-                <StyledTableCell align="center" sx={FullNameTextStyle}>
-                  <Box fontWeight="bold">{registration.gender === 0 ? "Женский" : registration.gender === 1 ? "Мужской" : "-"}</Box>
-                </StyledTableCell>
-
-                <StyledTableCell align="center" sx={FullNameTextStyle}>
-                  {registration.city !== null ? registration.city : '-'}
-                </StyledTableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </StyledTable>
-
-      {subjects !== undefined && <TablePagination
-                sx={{ marginRight: 10 }}
-                rowsPerPageOptions={[10, 25, 50]}
-                component="div"
-                count={subjects.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                labelRowsPerPage={'Записей на странице'}
-                labelDisplayedRows={({ from, to, count }) => {
-                    return `${from}–${to} из ${count !== -1 ? count : `more than ${to}`}`
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />}
-    </TableContainer>
-
-
-*/
