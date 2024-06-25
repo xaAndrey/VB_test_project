@@ -153,7 +153,7 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
             <TablePagination
               rowsPerPageOptions={[10, 50, 100, { label: "All", value: -1 }]}
               colSpan={4}
-              count={comments.length}
+              count={filteredData.length}
               rowsPerPage={rowsPerPage}
               page={page}
               slotProps={{
