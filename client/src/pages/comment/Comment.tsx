@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { CommentDto } from "../../api/comments/dto";
 import { fetchCommentById } from "../../api/comments/request";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const Comment = () => {
   const [comment, setComment] = useState<CommentDto>();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => id === undefined ? console.log("undefined") : console.log(parseInt(id)), [id]);
   useEffect(() => console.log(comment), [comment]);
@@ -23,9 +24,9 @@ export const Comment = () => {
   return <>
   {comment?.id === undefined && <h1>Комментарий с таким ID не существует!</h1>}
 
-  <h1>{comment?.id}</h1>
-  <h2>{comment?.name}</h2>
-  <h3>{comment?.email}</h3>
-  <h4>{comment?.body}</h4>
+  <h1 onClick={() => navigate(`/?id=${comment?.id}`)}>{comment?.id}</h1>
+  <h2 onClick={() => navigate(`/?name=${comment?.name}`)}>{comment?.name}</h2>
+  <h3 onClick={() => navigate(`/?email=${comment?.email}`)}>{comment?.email}</h3>
+  <h4 onClick={() => navigate(`/?id=${comment?.id}&name=${comment?.name}&email=${comment?.email}`)}>{comment?.body}</h4>
   </>;
 };
