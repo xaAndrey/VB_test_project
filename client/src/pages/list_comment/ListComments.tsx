@@ -19,10 +19,10 @@ export const ListComments = (): JSX.Element => {
       id: `json`,
       label: 'JSON',
     },
-    {
-      id: `table_eui`,
-      label: 'Table EUI',
-    },
+    // {
+    //   id: `table_eui`,
+    //   label: 'Table EUI',
+    // },
     {
       id: `table_mui`,
       label: 'Table MUI',
