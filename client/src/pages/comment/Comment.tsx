@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { CommentDto } from "../../api/comments/dto";
 import { fetchCommentById } from "../../api/comments/request";
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress, Link, Stack } from "@mui/material";
+import WestIcon from "@mui/icons-material/West";
+import { routes } from "../../util/constants";
 
 export const Comment = () => {
   const [comment, setComment] = useState<CommentDto>();
@@ -50,25 +52,55 @@ export const Comment = () => {
         </Box>
       )}
       {comment?.id === undefined && !loading && (
-        <h1>Комментарий с таким ID не существует!</h1>
+        <div>
+          <Button
+            startIcon={<WestIcon />}
+            onClick={() => navigate(routes.main)}
+            style={{ color: "#1a1a1a" }}
+          >
+            Назад
+          </Button>
+          <Stack>
+            <h1>Комментарий с таким ID не существует!</h1>
+          </Stack>
+        </div>
       )}
-
-      <h1 onClick={() => navigate(`/?id=${comment?.id}`)}>{comment?.id}</h1>
-      <h2 onClick={() => navigate(`/?name=${comment?.name}`)}>
-        {comment?.name}
-      </h2>
-      <h3 onClick={() => navigate(`/?email=${comment?.email}`)}>
-        {comment?.email}
-      </h3>
-      <h4
-        onClick={() =>
-          navigate(
-            `/?id=${comment?.id}&name=${comment?.name}&email=${comment?.email}`
-          )
-        }
-      >
-        {comment?.body}
-      </h4>
+      {comment?.id !== undefined && !loading && (
+        <div>
+          <Button
+            startIcon={<WestIcon />}
+            onClick={() => navigate(routes.main)}
+            style={{ color: "#1a1a1a" }}
+          >
+            Назад
+          </Button>
+          <h1>
+            {"ID: "}
+            <Link onClick={() => navigate(`/?id=${comment?.id}`)}>
+              {comment?.id}
+            </Link>
+          </h1>
+          <h2>
+            {"Name: "}
+            <Link onClick={() => navigate(`/?name=${comment?.name}`)}>
+              {comment?.name}
+            </Link>
+          </h2>
+          <h2 onClick={() => navigate(`/?email=${comment?.email}`)}>
+            {"Email: "}
+            <Link>{comment?.email}</Link>
+          </h2>
+          <h4
+            onClick={() =>
+              navigate(
+                `/?id=${comment?.id}&name=${comment?.name}&email=${comment?.email}`
+              )
+            }
+          >
+            {`Body: ${comment?.body}`}
+          </h4>
+        </div>
+      )}
     </>
   );
 };
