@@ -12,7 +12,7 @@ import { TableMUIVisualization } from "../../components/TableMUIVisualization";
 
 export const ListComments = (): JSX.Element => {
   const [comments, setComments] = useState<CommentDto[]>([]);
-  const [variant, setVariant] = useState<string>("table_eui");
+  const [variant, setVariant] = useState<string>("table_mui");
 
   const toggleButtons = [
     {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CommentDto } from "../api/comments/dto";
 import {
   Table,
@@ -9,8 +9,10 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
 } from "@mui/material";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
+import { useSearchParams } from "react-router-dom";
 
 interface TableMUIVisualizationProps {
   comments: CommentDto[];
@@ -21,6 +23,24 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
 }) => {
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchValues, setSearchValues] = useState({
+    id: searchParams.get('id') ?? "",
+    name: searchParams.get('name') ?? "",
+    email: searchParams.get('email') ?? "",
+  });
+
+  useEffect(() => {
+    const params = {
+      id: '',
+      name: '',
+      email: ''
+    };
+    if (searchValues.id) params.id = searchValues.id;
+    if (searchValues.name) params.name = searchValues.name;
+    if (searchValues.email) params.email = searchValues.email;
+    setSearchParams(params)
+  }, [searchValues]);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - comments.length) : 0;
@@ -39,36 +59,79 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
     setPage(0);
   };
 
+  // Фильтрация данных на основе значений поиска
+  const filteredData = comments.filter((item) => {
+    return (
+      item.name.toLowerCase().includes(searchValues.name.toLowerCase()) &&
+      item.id.toString().includes(searchValues.id) &&
+      item.email.toLowerCase().includes(searchValues.email.toLowerCase())
+    );
+  });
+
+  const handleSearchChange = (column: string, value: string) => {
+    setSearchValues((prevState) => ({
+      ...prevState,
+      [column]: value,
+    }));
+  };
+
   return (
     <TableContainer>
       <Table aria-label="Comments List">
         <TableHead>
+        <TableRow>
+            <TableCell>
+              <TextField
+                label="Search ID"
+                variant="outlined"
+                value={searchValues.id}
+                onChange={(e) => handleSearchChange('id', e.target.value)}
+                fullWidth
+              />
+            </TableCell>
+            <TableCell>
+              <TextField
+                label="Search Email"
+                variant="outlined"
+                value={searchValues.email}
+                onChange={(e) => handleSearchChange('email', e.target.value)}
+                fullWidth
+              />
+            </TableCell>
+            <TableCell>
+              <TextField
+                label="Search Name"
+                variant="outlined"
+                value={searchValues.name}
+                onChange={(e) => handleSearchChange('name', e.target.value)}
+                fullWidth
+              />
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableHead>
           <TableRow>
-            <TableCell style={{ color: "white" }}>ID</TableCell>
-            <TableCell style={{ color: "white" }}>Email</TableCell>
-            <TableCell style={{ color: "white" }}>Name</TableCell>
+            <TableCell>ID</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Name</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {(rowsPerPage > 0
-            ? comments.slice(
+            ? filteredData.slice(
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage
               )
-            : comments
+            : filteredData
           ).map((comment) => (
             <TableRow key={comment.id}>
-              <TableCell component="th" scope="row" style={{ color: "white" }}>
+              <TableCell component="th" scope="row">
                 {comment.id}
               </TableCell>
 
-              <TableCell style={{ width: "40%", color: "white" }}>
-                {comment.email}
-              </TableCell>
+              <TableCell style={{ width: "40%" }}>{comment.email}</TableCell>
 
-              <TableCell style={{ width: "40%", color: "white" }}>
-                {comment.name}
-              </TableCell>
+              <TableCell style={{ width: "40%" }}>{comment.name}</TableCell>
             </TableRow>
           ))}
           {emptyRows > 0 && (
@@ -78,9 +141,8 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
           )}
         </TableBody>
         <TableFooter>
-          <TableRow >
+          <TableRow>
             <TablePagination
-            style={{color: 'white'}}
               rowsPerPageOptions={[10, 50, 100, { label: "All", value: -1 }]}
               colSpan={3}
               count={comments.length}
