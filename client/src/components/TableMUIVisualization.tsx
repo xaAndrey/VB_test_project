@@ -116,10 +116,10 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
         </TableHead>
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Link</TableCell>
+            <TableCell align="center">ID</TableCell>
+            <TableCell align="center">Email</TableCell>
+            <TableCell align="center">Name</TableCell>
+            <TableCell align="center">Link</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -131,15 +131,15 @@ export const TableMUIVisualization: React.FC<TableMUIVisualizationProps> = ({
             : filteredData
           ).map((comment) => (
             <TableRow key={comment.id}>
-              <TableCell component="th" scope="row">
+              <TableCell component="th" scope="row" align="center">
                 {comment.id}
               </TableCell>
 
-              <TableCell style={{ width: "30%" }}>{comment.email}</TableCell>
+              <TableCell style={{ width: "30%" }} align="center">{comment.email}</TableCell>
 
-              <TableCell style={{ width: "30%" }}>{comment.name}</TableCell>
+              <TableCell style={{ width: "30%" }} align="center">{comment.name}</TableCell>
               
-              <TableCell style={{ width: "20%" }}><Link onClick={() => navigate(routes.goToCommentPage(comment.id))}>{`/comment/${comment.id}`}</Link></TableCell>
+              <TableCell style={{ width: "20%" }} align="center"><Link onClick={() => navigate(routes.goToCommentPage(comment.id))}>{`/comment/${comment.id}`}</Link></TableCell>
             </TableRow>
           ))}
           {emptyRows > 0 && (
